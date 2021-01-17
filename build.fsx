@@ -8,14 +8,14 @@ open Fake.DotNet
 open Fake.IO.Globbing.Operators
 
 let contentFiles = !! "./content/**/*.fx" ++ "./content/**/*.spritefont"
-let projectFile = "./src/Game/Game.fsproj"
+let projectFile = "./src/Cubes/Cubes.fsproj"
 
 Target.create "BuildContent" (fun _ ->
     let toBuild =
         contentFiles
         |> Seq.map (fun filepath -> sprintf "/b:%s" filepath)
 
-    let args = "/platform:Windows /o:src/Game /n:intermediateContent " + String.Join(" ", toBuild)
+    let args = "/platform:Windows /o:src/Cubes /n:intermediateContent " + String.Join(" ", toBuild)
     let result = DotNet.exec id "mgcb" args
     if result.ExitCode <> 0 then failwithf "'dotnet mgcb %s' failed" args
 )
@@ -25,7 +25,7 @@ Target.create "Build" (fun _ ->
 )
 
 Target.create "Run" (fun _ ->
-    CreateProcess.fromRawCommand "src/Game/bin/Release/netcoreapp3.1/Game.exe" []
+    CreateProcess.fromRawCommand "src/Cubes/bin/Release/netcoreapp3.1/Cubes.exe" []
     |> Proc.startRawSync
     |> ignore
     Process.setKillCreatedProcesses false
