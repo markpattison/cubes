@@ -129,7 +129,7 @@ let showParameters gameContent =
 let draw (device: GraphicsDevice) gameContent (gameTime: GameTime) =
     let time = (single gameTime.TotalGameTime.TotalMilliseconds) / 100.0f
 
-    do device.Clear(Color.LightGray)
+    do device.Clear(Color.DarkGray)
 
     let effect = gameContent.Effect
 
@@ -137,8 +137,8 @@ let draw (device: GraphicsDevice) gameContent (gameTime: GameTime) =
     effect.Parameters.["xWorld"].SetValue(Matrix.Identity)
     effect.Parameters.["xView"].SetValue(Matrix.CreateLookAt(Vector3(-5.0f, 2.0f, 5.0f), Vector3.Zero, Vector3.UnitY))
     effect.Parameters.["xProjection"].SetValue(Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, device.Viewport.AspectRatio, 0.1f, 100.0f))
-    effect.Parameters.["xAmbient"].SetValue(1.0f)
-    effect.Parameters.["xLightDirection"].SetValue(Vector3.Zero)
+    effect.Parameters.["xAmbient"].SetValue(0.2f)
+    effect.Parameters.["xLightPosition"].SetValue(Vector3(-5.0f, 2.0f, 5.0f))
 
     effect.CurrentTechnique.Passes |> Seq.iter
         (fun pass ->

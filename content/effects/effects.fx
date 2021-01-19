@@ -2,20 +2,21 @@ float4x4 xView;
 float4x4 xProjection;
 float4x4 xWorld;
 float xAmbient;
-float3 xLightDirection;
+float3 xLightPosition;
 
 struct VertexShaderInput
 {
     float4 Position	: SV_POSITION;
-	float3 Normal   : NORMAL;
-    float4 Colour   : COLOR0;
+	float3 Normal : NORMAL;
+    float4 Colour : COLOR0;
 };
 
 struct VertexToPixel
 {
 	float4 Position : SV_POSITION;
-	float3 Normal   : NORMAL;
-	float4 Colour   : COLOR0;
+	float3 WorldPosition: TEXCOORD0;
+	float3 Normal : NORMAL;
+	float4 Colour : COLOR0;
 };
 
 struct PixelToFrame
@@ -33,6 +34,7 @@ VertexToPixel CubeVS(VertexShaderInput input)
 	float3 normal = normalize(mul(float4(input.Normal, 0.0), xWorld)).xyz;
 
 	output.Position = mul(input.Position, preWorldViewProjection);
+	output.WorldPosition = mul(input.Position, xWorld);
 	output.Normal = normal;
 	output.Colour = input.Colour;
 
@@ -43,9 +45,11 @@ PixelToFrame CubePS(VertexToPixel input)
 {
 	PixelToFrame output;
 
-	float lightingFactor = saturate(dot(input.Normal, -xLightDirection)) + xAmbient;
+	float3 lightDirection = normalize(input.WorldPosition - xLightPosition);
+	float3 normal = normalize(input.Normal);
+	float lightingFactor = saturate(dot(normal, -lightDirection)) * 1.0 + xAmbient;
 
-	output.Colour = input.Colour * lightingFactor;
+	output.Colour = float4(input.Colour.rgb * lightingFactor, input.Colour.a);
 
 	return output;
 }
