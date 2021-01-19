@@ -15,6 +15,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Compile Include="Input.fs" />
+    <Compile Include="VertexPositionNormalColour.fs" />
     <Compile Include="Cubes.fs" />
     <Compile Include="Game.fs" />
     <Compile Include="Program.fs" />
