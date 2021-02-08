@@ -108,7 +108,7 @@ let colours = [|
 
 let loadContent (_this: Game) device =
     {
-        Effect = _this.Content.Load<Effect>("Effects/effects")
+        Effect = _this.Content.Load<Effect>("effects/effects")
         SpriteFont = _this.Content.Load<SpriteFont>("Fonts/Arial")
         SpriteBatch = new SpriteBatch(device)
 
@@ -129,8 +129,6 @@ let showParameters gameContent =
 let draw (device: GraphicsDevice) gameContent (gameTime: GameTime) =
     let time = (single gameTime.TotalGameTime.TotalMilliseconds) / 100.0f
 
-    do device.Clear(Color.DarkGray)
-
     let effect = gameContent.Effect
 
     effect.CurrentTechnique <- effect.Techniques.["Cube"]
@@ -139,6 +137,8 @@ let draw (device: GraphicsDevice) gameContent (gameTime: GameTime) =
     effect.Parameters.["xProjection"].SetValue(Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, device.Viewport.AspectRatio, 0.1f, 100.0f))
     effect.Parameters.["xAmbient"].SetValue(0.2f)
     effect.Parameters.["xLightPosition"].SetValue(Vector3(-5.0f, 2.0f, 5.0f))
+    
+    device.DepthStencilState <- DepthStencilState.Default
 
     effect.CurrentTechnique.Passes |> Seq.iter
         (fun pass ->

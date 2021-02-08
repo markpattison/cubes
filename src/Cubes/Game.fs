@@ -10,6 +10,7 @@ type Game1() as _this =
     inherit Game()
     let mutable input = Unchecked.defaultof<Input.State>
     let mutable gameContent = Unchecked.defaultof<Sample.Content>
+    let mutable axesContent = Unchecked.defaultof<Axes.Content>
 
     let graphics = new GraphicsDeviceManager(_this)
 
@@ -31,6 +32,7 @@ type Game1() as _this =
     override _this.LoadContent() =
         input <- Input.initialState()
 
+        axesContent <- Axes.loadContent _this _this.GraphicsDevice
         gameContent <- Sample.loadContent _this _this.GraphicsDevice
 
     override _this.Update(gameTime) =
@@ -41,7 +43,9 @@ type Game1() as _this =
         base.Update(gameTime)
 
     override _this.Draw(gameTime) =
+        _this.GraphicsDevice.Clear(Color.DarkGray)
 
         Sample.draw _this.GraphicsDevice gameContent gameTime
+        Axes.draw _this.GraphicsDevice axesContent gameTime
         
         base.Draw(gameTime)
