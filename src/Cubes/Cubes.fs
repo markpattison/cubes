@@ -12,6 +12,7 @@ type Content =
         Effect: Effect
         Vertices: VertexPositionNormalColour []
         Indices: int []
+        Cubes: (Vector3 * float32) list
     }
 
 let positions = [|
@@ -117,6 +118,10 @@ let loadContent (_this: Game) device =
                 VertexPositionNormalColour(positions.[i], normals.[i], colours.[i / 4]))
         
         Indices = indices
+        Cubes =
+            [ Vector3(0.0f, 0.0f, 0.0f), 1.0f
+              Vector3(-1.0f, 0.0f, 0.0f), 0.5f
+              Vector3(-2.0f, 0.0f, 0.0f), 0.25f ]
     }
 
 let showParameters gameContent =
@@ -132,7 +137,6 @@ let draw (device: GraphicsDevice) gameContent (gameTime: GameTime) =
     let effect = gameContent.Effect
 
     effect.CurrentTechnique <- effect.Techniques.["Cube"]
-    effect.Parameters.["xWorld"].SetValue(Matrix.Identity)
     effect.Parameters.["xView"].SetValue(Matrix.CreateLookAt(Vector3(-5.0f, 2.0f, 5.0f), Vector3.Zero, Vector3.UnitY))
     effect.Parameters.["xProjection"].SetValue(Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, device.Viewport.AspectRatio, 0.1f, 100.0f))
     effect.Parameters.["xAmbient"].SetValue(0.2f)
@@ -140,10 +144,15 @@ let draw (device: GraphicsDevice) gameContent (gameTime: GameTime) =
     
     device.DepthStencilState <- DepthStencilState.Default
 
-    effect.CurrentTechnique.Passes |> Seq.iter
-        (fun pass ->
-            pass.Apply()
-            device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, gameContent.Vertices, 0, gameContent.Vertices.Length, gameContent.Indices, 0, gameContent.Indices.Length / 3)
-        )
+    gameContent.Cubes
+    |> List.iter (fun (centre, size) ->
+
+        effect.CurrentTechnique.Passes |> Seq.iter
+            (fun pass ->
+                pass.Apply()
+
+                effect.Parameters.["xWorld"].SetValue(Matrix.CreateScale(size * 0.5f) * Matrix.CreateTranslation(centre))
+                device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, gameContent.Vertices, 0, gameContent.Vertices.Length, gameContent.Indices, 0, gameContent.Indices.Length / 3)
+            ))
 
     showParameters gameContent
