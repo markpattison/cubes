@@ -11,6 +11,7 @@ type Content =
         SpriteFont: SpriteFont
         Effect: Effect
         Vertices: VertexPositionNormalColour []
+        PickerVertices: VertexPositionColor []
         Indices: int []
         Cubes: (Vector3 * float32) list
     }
@@ -117,6 +118,11 @@ let loadContent (_this: Game) device =
             Array.init 24 (fun i ->
                 VertexPositionNormalColour(positions.[i], normals.[i], colours.[i / 4]))
         
+        PickerVertices =
+            Array.init 24 (fun i ->
+                let faceIndex = 50 * (i / 4)
+                VertexPositionColor(positions.[i], Color(faceIndex, faceIndex, faceIndex) ))
+
         Indices = indices
         Cubes =
             [ Vector3(0.0f, 0.0f, 0.0f), 1.0f
@@ -152,6 +158,31 @@ let draw (device: GraphicsDevice) gameContent (gameTime: GameTime) =
                 pass.Apply()
 
                 effect.Parameters.["xWorld"].SetValue(Matrix.CreateScale(size * 0.5f) * Matrix.CreateTranslation(centre))
+                device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, gameContent.Vertices, 0, gameContent.Vertices.Length, gameContent.Indices, 0, gameContent.Indices.Length / 3)
+            ))
+
+    showParameters gameContent
+
+let drawPicker (device: GraphicsDevice) gameContent (gameTime: GameTime) =
+    let time = (single gameTime.TotalGameTime.TotalMilliseconds) / 100.0f
+
+    let effect = gameContent.Effect
+
+    effect.CurrentTechnique <- effect.Techniques.["Picker"]
+    effect.Parameters.["xView"].SetValue(Matrix.CreateLookAt(Vector3(-5.0f, 2.0f, 5.0f), Vector3.Zero, Vector3.UnitY))
+    effect.Parameters.["xProjection"].SetValue(Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, device.Viewport.AspectRatio, 0.1f, 100.0f))
+    
+    device.DepthStencilState <- DepthStencilState.Default
+
+    gameContent.Cubes
+    |> List.iteri (fun cubeIndex (centre, size) ->
+
+        effect.CurrentTechnique.Passes |> Seq.iter
+            (fun pass ->
+                pass.Apply()
+
+                effect.Parameters.["xWorld"].SetValue(Matrix.CreateScale(size * 0.5f) * Matrix.CreateTranslation(centre))
+                effect.Parameters.["xCubeIndex"].SetValue((float32 (1 + cubeIndex)) / 10.0f)
                 device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, gameContent.Vertices, 0, gameContent.Vertices.Length, gameContent.Indices, 0, gameContent.Indices.Length / 3)
             ))
 

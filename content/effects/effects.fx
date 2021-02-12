@@ -34,7 +34,7 @@ VertexToPixel CubeVS(VertexShaderInput input)
 	float3 normal = normalize(mul(float4(input.Normal, 0.0), xWorld)).xyz;
 
 	output.Position = mul(input.Position, preWorldViewProjection);
-	output.WorldPosition = mul(input.Position, xWorld);
+	output.WorldPosition = mul(input.Position, xWorld).rgb;
 	output.Normal = normal;
 	output.Colour = input.Colour;
 
@@ -60,5 +60,61 @@ technique Cube
 	{
 		VertexShader = compile vs_4_0 CubeVS();
 		PixelShader = compile ps_4_0 CubePS();
+	}
+}
+
+/// Picker
+
+float xCubeIndex;
+
+struct PickerVertexShaderInput
+{
+    float4 Position	: SV_POSITION;
+    float Colour : COLOR0;
+};
+
+struct PickerVertexToPixel
+{
+	float4 Position : SV_POSITION;
+	float2 Colour : COLOR0;	
+};
+
+struct PickerPixelToFrame
+{
+	float4 Colour   : COLOR0;
+};
+
+PickerVertexToPixel PickerVS(PickerVertexShaderInput input)
+{
+	PickerVertexToPixel output;
+
+	float4x4 preViewProjection = mul(xView, xProjection);
+	float4x4 preWorldViewProjection = mul(xWorld, preViewProjection);
+
+	output.Position = mul(input.Position, preWorldViewProjection);
+
+	output.Colour.r = xCubeIndex;
+	output.Colour.g = input.Colour;
+
+	return output;
+}
+
+PickerPixelToFrame PickerPS(PickerVertexToPixel input)
+{
+	PickerPixelToFrame output;
+
+	output.Colour.rg = input.Colour;
+	output.Colour.b = 0.0;
+	output.Colour.a = 1.0;
+
+	return output;
+}
+
+technique Picker
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_4_0 PickerVS();
+		PixelShader = compile ps_4_0 PickerPS();
 	}
 }
