@@ -1,4 +1,4 @@
-﻿module Sample
+﻿module Cubes
 
 open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics

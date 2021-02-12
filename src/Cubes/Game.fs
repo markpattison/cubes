@@ -1,7 +1,5 @@
 module Game
 
-open System.IO
-open System
 open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
 open Microsoft.Xna.Framework.Input
@@ -9,7 +7,7 @@ open Microsoft.Xna.Framework.Input
 type Game1() as _this =
     inherit Game()
     let mutable input = Unchecked.defaultof<Input.State>
-    let mutable gameContent = Unchecked.defaultof<Sample.Content>
+    let mutable gameContent = Unchecked.defaultof<Cubes.Content>
     let mutable axesContent = Unchecked.defaultof<Axes.Content>
     let mutable pickerTarget = Unchecked.defaultof<RenderTarget2D>
     let mutable debugContent = Unchecked.defaultof<Debug.Content>
@@ -37,7 +35,7 @@ type Game1() as _this =
         input <- Input.initialState()
 
         axesContent <- Axes.loadContent _this _this.GraphicsDevice
-        gameContent <- Sample.loadContent _this _this.GraphicsDevice
+        gameContent <- Cubes.loadContent _this _this.GraphicsDevice
         debugContent <- Debug.loadContent _this
 
         let pp = _this.GraphicsDevice.PresentationParameters
@@ -56,12 +54,12 @@ type Game1() as _this =
         _this.GraphicsDevice.SetRenderTarget(pickerTarget)
         _this.GraphicsDevice.Clear(Color.Black)
 
-        Sample.drawPicker _this.GraphicsDevice gameContent gameTime
+        Cubes.drawPicker _this.GraphicsDevice gameContent gameTime
 
         _this.GraphicsDevice.SetRenderTarget(null)
         _this.GraphicsDevice.Clear(Color.DarkGray)
 
-        Sample.draw _this.GraphicsDevice gameContent gameTime
+        Cubes.draw _this.GraphicsDevice gameContent gameTime
         Axes.draw _this.GraphicsDevice axesContent gameTime
         Debug.draw _this.GraphicsDevice debugContent pickerTarget
 
