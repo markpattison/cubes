@@ -185,5 +185,3 @@ let drawPicker (device: GraphicsDevice) gameContent (gameTime: GameTime) =
                 effect.Parameters.["xCubeIndex"].SetValue((float32 (1 + cubeIndex)) / 10.0f)
                 device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, gameContent.Vertices, 0, gameContent.Vertices.Length, gameContent.Indices, 0, gameContent.Indices.Length / 3)
             ))
-
-    showParameters gameContent
