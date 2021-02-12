@@ -35,10 +35,10 @@ let loadContent (_this: Game) device =
                 VertexPositionColor(positions.[i], colours.[i]))
     }
 
-let draw (device: GraphicsDevice) axesContent (gameTime: GameTime) =
+let draw (device: GraphicsDevice) content (gameTime: GameTime) =
     let time = (single gameTime.TotalGameTime.TotalMilliseconds) / 100.0f
 
-    let effect = axesContent.Effect
+    let effect = content.Effect
 
     effect.CurrentTechnique <- effect.Techniques.["PosCol"]
     effect.Parameters.["xWorld"].SetValue(Matrix.Identity)
@@ -50,5 +50,5 @@ let draw (device: GraphicsDevice) axesContent (gameTime: GameTime) =
     effect.CurrentTechnique.Passes |> Seq.iter
         (fun pass ->
             pass.Apply()
-            device.DrawUserPrimitives(PrimitiveType.LineList, axesContent.Vertices, 0, axesContent.Vertices.Length / 2)
+            device.DrawUserPrimitives(PrimitiveType.LineList, content.Vertices, 0, content.Vertices.Length / 2)
         )

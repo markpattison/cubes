@@ -6,11 +6,15 @@ open Microsoft.Xna.Framework.Input
 
 type Game1() as _this =
     inherit Game()
+
     let mutable input = Unchecked.defaultof<Input.State>
+    let mutable pickerTarget = Unchecked.defaultof<RenderTarget2D>
+
     let mutable gameContent = Unchecked.defaultof<Cubes.Content>
     let mutable axesContent = Unchecked.defaultof<Axes.Content>
-    let mutable pickerTarget = Unchecked.defaultof<RenderTarget2D>
+    let mutable textContent = Unchecked.defaultof<Text.Content>
     let mutable debugContent = Unchecked.defaultof<Debug.Content>
+    let mutable pickerTarget = Unchecked.defaultof<RenderTarget2D>
 
     let graphics = new GraphicsDeviceManager(_this)
 
@@ -32,15 +36,18 @@ type Game1() as _this =
         base.Initialize()
 
     override _this.LoadContent() =
+        let device = _this.GraphicsDevice
+
         input <- Input.initialState()
 
-        axesContent <- Axes.loadContent _this _this.GraphicsDevice
-        gameContent <- Cubes.loadContent _this _this.GraphicsDevice
+        axesContent <- Axes.loadContent _this device
+        gameContent <- Cubes.loadContent _this device
+        textContent <- Text.loadContent _this device
         debugContent <- Debug.loadContent _this
 
-        let pp = _this.GraphicsDevice.PresentationParameters
+        let pp = device.PresentationParameters
 
-        pickerTarget <- new RenderTarget2D(_this.GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight, false, SurfaceFormat.HalfVector2, pp.DepthStencilFormat)
+        pickerTarget <- new RenderTarget2D(device, pp.BackBufferWidth, pp.BackBufferHeight, false, SurfaceFormat.HalfVector2, pp.DepthStencilFormat)
 
     override _this.Update(gameTime) =
         updateInputState()
@@ -50,17 +57,19 @@ type Game1() as _this =
         base.Update(gameTime)
 
     override _this.Draw(gameTime) =
+        let device = _this.GraphicsDevice
 
-        _this.GraphicsDevice.SetRenderTarget(pickerTarget)
-        _this.GraphicsDevice.Clear(Color.Black)
+        device.SetRenderTarget(pickerTarget)
+        device.Clear(Color.Black)
 
-        Cubes.drawPicker _this.GraphicsDevice gameContent gameTime
+        Cubes.drawPicker device gameContent gameTime
 
-        _this.GraphicsDevice.SetRenderTarget(null)
-        _this.GraphicsDevice.Clear(Color.DarkGray)
+        device.SetRenderTarget(null)
+        device.Clear(Color.DarkGray)
 
-        Cubes.draw _this.GraphicsDevice gameContent gameTime
-        Axes.draw _this.GraphicsDevice axesContent gameTime
-        Debug.draw _this.GraphicsDevice debugContent pickerTarget
+        Cubes.draw device gameContent gameTime
+        Axes.draw device axesContent gameTime
+        Text.draw device textContent
+        Debug.draw device debugContent pickerTarget
 
         base.Draw(gameTime)

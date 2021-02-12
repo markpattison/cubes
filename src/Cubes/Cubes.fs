@@ -7,8 +7,6 @@ open VertexPositionNormalColour
 
 type Content =
     {
-        SpriteBatch: SpriteBatch
-        SpriteFont: SpriteFont
         Effect: Effect
         Vertices: VertexPositionNormalColour []
         PickerVertices: VertexPositionColor []
@@ -111,8 +109,6 @@ let colours = [|
 let loadContent (_this: Game) device =
     {
         Effect = _this.Content.Load<Effect>("effects/effects")
-        SpriteFont = _this.Content.Load<SpriteFont>("Fonts/Arial")
-        SpriteBatch = new SpriteBatch(device)
 
         Vertices =
             Array.init 24 (fun i ->
@@ -130,17 +126,10 @@ let loadContent (_this: Game) device =
               Vector3(-2.0f, 0.0f, 0.0f), 0.25f ]
     }
 
-let showParameters gameContent =
-    let colour = Color.DarkSlateGray
-
-    gameContent.SpriteBatch.Begin()
-    gameContent.SpriteBatch.DrawString(gameContent.SpriteFont, "monogame-fsharp", Vector2(10.0f, 10.0f), colour)
-    gameContent.SpriteBatch.End()
-
-let draw (device: GraphicsDevice) gameContent (gameTime: GameTime) =
+let draw (device: GraphicsDevice) content (gameTime: GameTime) =
     let time = (single gameTime.TotalGameTime.TotalMilliseconds) / 100.0f
 
-    let effect = gameContent.Effect
+    let effect = content.Effect
 
     effect.CurrentTechnique <- effect.Techniques.["Cube"]
     effect.Parameters.["xView"].SetValue(Matrix.CreateLookAt(Vector3(-5.0f, 2.0f, 5.0f), Vector3.Zero, Vector3.UnitY))
@@ -150,7 +139,7 @@ let draw (device: GraphicsDevice) gameContent (gameTime: GameTime) =
     
     device.DepthStencilState <- DepthStencilState.Default
 
-    gameContent.Cubes
+    content.Cubes
     |> List.iter (fun (centre, size) ->
 
         effect.CurrentTechnique.Passes |> Seq.iter
@@ -158,10 +147,8 @@ let draw (device: GraphicsDevice) gameContent (gameTime: GameTime) =
                 pass.Apply()
 
                 effect.Parameters.["xWorld"].SetValue(Matrix.CreateScale(size * 0.5f) * Matrix.CreateTranslation(centre))
-                device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, gameContent.Vertices, 0, gameContent.Vertices.Length, gameContent.Indices, 0, gameContent.Indices.Length / 3)
+                device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, content.Vertices, 0, content.Vertices.Length, content.Indices, 0, content.Indices.Length / 3)
             ))
-
-    showParameters gameContent
 
 let drawPicker (device: GraphicsDevice) gameContent (gameTime: GameTime) =
     let time = (single gameTime.TotalGameTime.TotalMilliseconds) / 100.0f
