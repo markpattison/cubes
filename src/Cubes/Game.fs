@@ -26,6 +26,8 @@ type Game1() as _this =
     do graphics.ApplyChanges()
     do base.Content.RootDirectory <- "content"
 
+    do _this.IsMouseVisible <- true
+
     let updateInputState() =
         input <- Keyboard.GetState() |> Input.updated input
 
