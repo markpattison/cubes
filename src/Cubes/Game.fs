@@ -16,6 +16,11 @@ type Game1() as _this =
     let mutable textContent = Unchecked.defaultof<Text.Content>
     let mutable debugContent = Unchecked.defaultof<Debug.Content>
 
+    let mutable frames = 0
+    let mutable lastFrames = 0
+    let mutable lastMilliseconds = 0.0
+    let mutable fps = 0.0
+
     let graphics = new GraphicsDeviceManager(_this)
 
     do graphics.GraphicsProfile <- GraphicsProfile.HiDef
@@ -58,6 +63,14 @@ type Game1() as _this =
         base.Update(gameTime)
 
     override _this.Draw(gameTime) =
+
+        frames <- frames + 1
+        let elapsed = gameTime.TotalGameTime.TotalMilliseconds - lastMilliseconds
+        if elapsed > 1000.0 then
+            fps <- float (frames - lastFrames) * 1000.0 / elapsed
+            lastMilliseconds <- gameTime.TotalGameTime.TotalMilliseconds
+            lastFrames <- frames
+
         let device = _this.GraphicsDevice
 
         device.SetRenderTarget(pickerTarget)
@@ -84,7 +97,7 @@ type Game1() as _this =
 
         Cubes.draw device gameContent gameTime cubeIndex faceIndex
         Axes.draw device axesContent gameTime
-        Text.draw device textContent
+        Text.draw device textContent fps
         Debug.draw device debugContent pickerTarget
 
         base.Draw(gameTime)

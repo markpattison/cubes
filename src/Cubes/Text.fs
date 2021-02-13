@@ -15,9 +15,11 @@ let loadContent (_this: Game) device =
         SpriteBatch = new SpriteBatch(device)
     }
 
-let draw (device: GraphicsDevice) content =
+let draw (device: GraphicsDevice) content fps =
     let colour = Color.DarkSlateGray
 
+    let s = sprintf "F# MonoGame, FPS: %.0f" fps
+
     content.SpriteBatch.Begin()
-    content.SpriteBatch.DrawString(content.SpriteFont, "monogame-fsharp", Vector2(10.0f, 10.0f), colour)
+    content.SpriteBatch.DrawString(content.SpriteFont, s, Vector2(10.0f, 10.0f), colour)
     content.SpriteBatch.End()
