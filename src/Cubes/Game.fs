@@ -9,6 +9,7 @@ type Game1() as _this =
 
     let mutable input = Unchecked.defaultof<Input.State>
     let mutable pickerTarget = Unchecked.defaultof<RenderTarget2D>
+    let mutable pickerData = Unchecked.defaultof<PackedVector.HalfVector2 []>
 
     let mutable gameContent = Unchecked.defaultof<Cubes.Content>
     let mutable axesContent = Unchecked.defaultof<Axes.Content>
@@ -47,6 +48,7 @@ type Game1() as _this =
         let pp = device.PresentationParameters
 
         pickerTarget <- new RenderTarget2D(device, pp.BackBufferWidth, pp.BackBufferHeight, false, SurfaceFormat.HalfVector2, pp.DepthStencilFormat)
+        pickerData <- Array.zeroCreate 1
 
     override _this.Update(gameTime) =
         updateInputState()
@@ -64,13 +66,23 @@ type Game1() as _this =
         Cubes.drawPicker device gameContent gameTime
 
         // TODO
-        let cubeIndex = 0
-        let faceIndex = 0
+
+        let mouse = Mouse.GetState()
+
+        let x, y = mouse.X, mouse.Y;
+
+        let cubeIndex, faceIndex =
+            if x >= 0 && y >= 0 && x < pickerTarget.Width && y < pickerTarget.Height then
+                pickerTarget.GetData<PackedVector.HalfVector2>(0, Rectangle(x, y, 1, 1), pickerData, 0, 1)
+                let pickColour = pickerData.[0].ToVector2()
+                8.0f * pickColour.X, 6.0f * pickColour.Y
+            else
+                0.0f, 0.0f
 
         device.SetRenderTarget(null)
         device.Clear(Color.DarkGray)
 
-        Cubes.draw device gameContent gameTime
+        Cubes.draw device gameContent gameTime cubeIndex faceIndex
         Axes.draw device axesContent gameTime
         Text.draw device textContent
         Debug.draw device debugContent pickerTarget

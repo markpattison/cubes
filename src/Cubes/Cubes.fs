@@ -121,7 +121,7 @@ let loadContent (_this: Game) device =
               Vector3(-2.0f, 0.0f, 0.0f), 0.25f ]
     }
 
-let draw (device: GraphicsDevice) content (gameTime: GameTime) =
+let draw (device: GraphicsDevice) content (gameTime: GameTime) (cubeTag: float32) (faceTag: float32) =
     let time = (single gameTime.TotalGameTime.TotalMilliseconds) / 100.0f
 
     let effect = content.Effect
@@ -132,8 +132,8 @@ let draw (device: GraphicsDevice) content (gameTime: GameTime) =
     effect.Parameters.["xAmbient"].SetValue(0.2f)
     effect.Parameters.["xLightPosition"].SetValue(Vector3(-5.0f, 2.0f, 5.0f))
 
-    effect.Parameters.["xFaceTag"].SetValue(6.0f)
-    effect.Parameters.["xCubeTag"].SetValue(3.0f)
+    effect.Parameters.["xCubeTag"].SetValue(cubeTag)
+    effect.Parameters.["xFaceTag"].SetValue(faceTag)
     
     device.DepthStencilState <- DepthStencilState.Default
 
