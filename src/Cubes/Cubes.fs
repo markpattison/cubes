@@ -3,13 +3,12 @@
 open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
 
-open VertexPositionNormalColour
+open VertexPositionNormalColourTag
 
 type Content =
     {
         Effect: Effect
-        Vertices: VertexPositionNormalColour []
-        PickerVertices: VertexPositionColor []
+        Vertices: VertexPositionNormalColourTag []
         Indices: int []
         Cubes: (Vector3 * float32) list
     }
@@ -112,12 +111,8 @@ let loadContent (_this: Game) device =
 
         Vertices =
             Array.init 24 (fun i ->
-                VertexPositionNormalColour(positions.[i], normals.[i], colours.[i / 4]))
-        
-        PickerVertices =
-            Array.init 24 (fun i ->
-                let faceIndex = 50 * (i / 4)
-                VertexPositionColor(positions.[i], Color(faceIndex, faceIndex, faceIndex) ))
+                let faceIndex = float32 (i / 4)
+                VertexPositionNormalColourTag(positions.[i], normals.[i], colours.[i / 4], faceIndex))
 
         Indices = indices
         Cubes =
@@ -150,10 +145,10 @@ let draw (device: GraphicsDevice) content (gameTime: GameTime) =
                 device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, content.Vertices, 0, content.Vertices.Length, content.Indices, 0, content.Indices.Length / 3)
             ))
 
-let drawPicker (device: GraphicsDevice) gameContent (gameTime: GameTime) =
+let drawPicker (device: GraphicsDevice) content (gameTime: GameTime) =
     let time = (single gameTime.TotalGameTime.TotalMilliseconds) / 100.0f
 
-    let effect = gameContent.Effect
+    let effect = content.Effect
 
     effect.CurrentTechnique <- effect.Techniques.["Picker"]
     effect.Parameters.["xView"].SetValue(Matrix.CreateLookAt(Vector3(-5.0f, 2.0f, 5.0f), Vector3.Zero, Vector3.UnitY))
@@ -161,7 +156,7 @@ let drawPicker (device: GraphicsDevice) gameContent (gameTime: GameTime) =
     
     device.DepthStencilState <- DepthStencilState.Default
 
-    gameContent.Cubes
+    content.Cubes
     |> List.iteri (fun cubeIndex (centre, size) ->
 
         effect.CurrentTechnique.Passes |> Seq.iter
@@ -170,5 +165,5 @@ let drawPicker (device: GraphicsDevice) gameContent (gameTime: GameTime) =
 
                 effect.Parameters.["xWorld"].SetValue(Matrix.CreateScale(size * 0.5f) * Matrix.CreateTranslation(centre))
                 effect.Parameters.["xCubeIndex"].SetValue((float32 (1 + cubeIndex)) / 10.0f)
-                device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, gameContent.Vertices, 0, gameContent.Vertices.Length, gameContent.Indices, 0, gameContent.Indices.Length / 3)
+                device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, content.Vertices, 0, content.Vertices.Length, content.Indices, 0, content.Indices.Length / 3)
             ))

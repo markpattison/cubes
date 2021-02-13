@@ -9,6 +9,7 @@ struct VertexShaderInput
     float4 Position	: SV_POSITION;
 	float3 Normal : NORMAL;
     float4 Colour : COLOR0;
+	float Tag : TEXCOORD0;
 };
 
 struct VertexToPixel
@@ -67,12 +68,6 @@ technique Cube
 
 float xCubeIndex;
 
-struct PickerVertexShaderInput
-{
-    float4 Position	: SV_POSITION;
-    float Colour : COLOR0;
-};
-
 struct PickerVertexToPixel
 {
 	float4 Position : SV_POSITION;
@@ -84,7 +79,7 @@ struct PickerPixelToFrame
 	float4 Colour   : COLOR0;
 };
 
-PickerVertexToPixel PickerVS(PickerVertexShaderInput input)
+PickerVertexToPixel PickerVS(VertexShaderInput input)
 {
 	PickerVertexToPixel output;
 
@@ -94,7 +89,7 @@ PickerVertexToPixel PickerVS(PickerVertexShaderInput input)
 	output.Position = mul(input.Position, preWorldViewProjection);
 
 	output.Colour.r = xCubeIndex;
-	output.Colour.g = input.Colour;
+	output.Colour.g = input.Tag / 6.0;
 
 	return output;
 }

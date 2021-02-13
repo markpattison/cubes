@@ -14,7 +14,6 @@ type Game1() as _this =
     let mutable axesContent = Unchecked.defaultof<Axes.Content>
     let mutable textContent = Unchecked.defaultof<Text.Content>
     let mutable debugContent = Unchecked.defaultof<Debug.Content>
-    let mutable pickerTarget = Unchecked.defaultof<RenderTarget2D>
 
     let graphics = new GraphicsDeviceManager(_this)
 
@@ -63,6 +62,10 @@ type Game1() as _this =
         device.Clear(Color.Black)
 
         Cubes.drawPicker device gameContent gameTime
+
+        // TODO
+        let cubeIndex = 0
+        let faceIndex = 0
 
         device.SetRenderTarget(null)
         device.Clear(Color.DarkGray)

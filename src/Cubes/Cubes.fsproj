@@ -12,7 +12,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Compile Include="Input.fs" />
-    <Compile Include="VertexPositionNormalColour.fs" />
+    <Compile Include="VertexPositionNormalColourTag.fs" />
     <Compile Include="Axes.fs" />
     <Compile Include="Cubes.fs" />
     <Compile Include="Debug.fs" />
