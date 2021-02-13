@@ -111,7 +111,7 @@ let loadContent (_this: Game) device =
 
         Vertices =
             Array.init 24 (fun i ->
-                let faceIndex = float32 (i / 4)
+                let faceIndex = float32 (1 + i / 4)
                 VertexPositionNormalColourTag(positions.[i], normals.[i], colours.[i / 4], faceIndex))
 
         Indices = indices
@@ -131,17 +131,21 @@ let draw (device: GraphicsDevice) content (gameTime: GameTime) =
     effect.Parameters.["xProjection"].SetValue(Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, device.Viewport.AspectRatio, 0.1f, 100.0f))
     effect.Parameters.["xAmbient"].SetValue(0.2f)
     effect.Parameters.["xLightPosition"].SetValue(Vector3(-5.0f, 2.0f, 5.0f))
+
+    effect.Parameters.["xFaceTag"].SetValue(6.0f)
+    effect.Parameters.["xCubeTag"].SetValue(3.0f)
     
     device.DepthStencilState <- DepthStencilState.Default
 
     content.Cubes
-    |> List.iter (fun (centre, size) ->
+    |> List.iteri (fun cubeIndex (centre, size) ->
 
         effect.CurrentTechnique.Passes |> Seq.iter
             (fun pass ->
                 pass.Apply()
 
                 effect.Parameters.["xWorld"].SetValue(Matrix.CreateScale(size * 0.5f) * Matrix.CreateTranslation(centre))
+                effect.Parameters.["xCubeIndex"].SetValue(float32 (1 + cubeIndex))
                 device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, content.Vertices, 0, content.Vertices.Length, content.Indices, 0, content.Indices.Length / 3)
             ))
 
@@ -164,6 +168,6 @@ let drawPicker (device: GraphicsDevice) content (gameTime: GameTime) =
                 pass.Apply()
 
                 effect.Parameters.["xWorld"].SetValue(Matrix.CreateScale(size * 0.5f) * Matrix.CreateTranslation(centre))
-                effect.Parameters.["xCubeIndex"].SetValue((float32 (1 + cubeIndex)) / 10.0f)
+                effect.Parameters.["xCubeIndex"].SetValue(float32 (1 + cubeIndex))
                 device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, content.Vertices, 0, content.Vertices.Length, content.Indices, 0, content.Indices.Length / 3)
             ))
