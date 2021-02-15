@@ -16,6 +16,7 @@
     <Compile Include="Axes.fs" />
     <Compile Include="Cubes.fs" />
     <Compile Include="Debug.fs" />
+    <Compile Include="Fps.fs" />
     <Compile Include="Text.fs" />
     <Compile Include="Game.fs" />
     <Compile Include="Program.fs" />
