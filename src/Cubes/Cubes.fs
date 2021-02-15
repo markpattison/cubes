@@ -121,14 +121,14 @@ let loadContent (_this: Game) device =
               Vector3(-2.0f, 0.0f, 0.0f), 0.25f ]
     }
 
-let draw (device: GraphicsDevice) content (gameTime: GameTime) (cubeTag: float32) (faceTag: float32) =
+let draw (device: GraphicsDevice) (viewMatrix: Matrix) (projectionMatrix: Matrix) content (gameTime: GameTime) (cubeTag: float32) (faceTag: float32) =
     let time = (single gameTime.TotalGameTime.TotalMilliseconds) / 100.0f
 
     let effect = content.Effect
 
     effect.CurrentTechnique <- effect.Techniques.["Cube"]
-    effect.Parameters.["xView"].SetValue(Matrix.CreateLookAt(Vector3(-5.0f, 2.0f, 5.0f), Vector3.Zero, Vector3.UnitY))
-    effect.Parameters.["xProjection"].SetValue(Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, device.Viewport.AspectRatio, 0.1f, 100.0f))
+    effect.Parameters.["xView"].SetValue(viewMatrix)
+    effect.Parameters.["xProjection"].SetValue(projectionMatrix)
     effect.Parameters.["xAmbient"].SetValue(0.2f)
     effect.Parameters.["xLightPosition"].SetValue(Vector3(-5.0f, 2.0f, 5.0f))
 
@@ -149,14 +149,14 @@ let draw (device: GraphicsDevice) content (gameTime: GameTime) (cubeTag: float32
                 device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, content.Vertices, 0, content.Vertices.Length, content.Indices, 0, content.Indices.Length / 3)
             ))
 
-let drawPicker (device: GraphicsDevice) content (gameTime: GameTime) =
+let drawPicker (device: GraphicsDevice) (viewMatrix: Matrix) (projectionMatrix: Matrix) content (gameTime: GameTime) =
     let time = (single gameTime.TotalGameTime.TotalMilliseconds) / 100.0f
 
     let effect = content.Effect
 
     effect.CurrentTechnique <- effect.Techniques.["Picker"]
-    effect.Parameters.["xView"].SetValue(Matrix.CreateLookAt(Vector3(-5.0f, 2.0f, 5.0f), Vector3.Zero, Vector3.UnitY))
-    effect.Parameters.["xProjection"].SetValue(Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, device.Viewport.AspectRatio, 0.1f, 100.0f))
+    effect.Parameters.["xView"].SetValue(viewMatrix)
+    effect.Parameters.["xProjection"].SetValue(projectionMatrix)
     
     device.DepthStencilState <- DepthStencilState.Default
 

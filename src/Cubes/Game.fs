@@ -1,5 +1,6 @@
 module Game
 
+open System
 open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
 open Microsoft.Xna.Framework.Input
@@ -16,6 +17,9 @@ type Game1() as _this =
     let mutable textContent = Unchecked.defaultof<Text.Content>
     let mutable debugContent = Unchecked.defaultof<Debug.Content>
     let mutable fps = Unchecked.defaultof<Diagnostics.Fps>
+
+    let mutable horizontalRotation = float32 (Math.PI * 7.0 / 4.0)
+    let mutable verticleRotation = float32 (-Math.PI / 4.0)
 
     let graphics = new GraphicsDeviceManager(_this)
 
@@ -57,6 +61,10 @@ type Game1() as _this =
 
         if Input.justPressed input Keys.Escape then _this.Exit()
 
+        horizontalRotation <- horizontalRotation + (if Input.isPressed input Keys.Left then 0.01f else 0.0f) - (if Input.isPressed input Keys.Right then 0.01f else 0.0f)
+        verticleRotation <- verticleRotation + (if Input.isPressed input Keys.Down then 0.01f else 0.0f) - (if Input.isPressed input Keys.Up then 0.01f else 0.0f)
+        verticleRotation <- max -1.4f (min 1.4f verticleRotation)
+
         base.Update(gameTime)
 
     override _this.Draw(gameTime) =
@@ -65,10 +73,14 @@ type Game1() as _this =
 
         let device = _this.GraphicsDevice
 
+        let cameraLocation = Vector3.Transform(Vector3(0.0f, 0.0f, 7.0f), Matrix.CreateRotationX(verticleRotation) * Matrix.CreateRotationY(horizontalRotation))
+        let viewMatrix = Matrix.CreateLookAt(cameraLocation, Vector3.Zero, Vector3.UnitY)
+        let projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, device.Viewport.AspectRatio, 0.1f, 100.0f)
+
         device.SetRenderTarget(pickerTarget)
         device.Clear(Color.Black)
 
-        Cubes.drawPicker device gameContent gameTime
+        Cubes.drawPicker device viewMatrix projectionMatrix gameContent gameTime
 
         let mouse = Mouse.GetState()
 
@@ -85,8 +97,8 @@ type Game1() as _this =
         device.SetRenderTarget(null)
         device.Clear(Color.DarkGray)
 
-        Cubes.draw device gameContent gameTime cubeIndex faceIndex
-        Axes.draw device axesContent gameTime
+        Cubes.draw device viewMatrix projectionMatrix gameContent gameTime cubeIndex faceIndex
+        Axes.draw device viewMatrix projectionMatrix axesContent gameTime
         Text.draw device textContent fps.Fps
         Debug.draw device debugContent pickerTarget
 

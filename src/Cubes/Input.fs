@@ -24,3 +24,6 @@ let updated inputState keyboardState =
 
 let justPressed inputState key =
     inputState.KeyboardState.IsKeyDown(key) && inputState.PreviousKeyboardState.IsKeyUp(key)
+
+let isPressed inputState key =
+    inputState.KeyboardState.IsKeyDown(key)

@@ -35,15 +35,15 @@ let loadContent (_this: Game) device =
                 VertexPositionColor(positions.[i], colours.[i]))
     }
 
-let draw (device: GraphicsDevice) content (gameTime: GameTime) =
+let draw (device: GraphicsDevice) (viewMatrix: Matrix) (projectionMatrix: Matrix) content (gameTime: GameTime) =
     let time = (single gameTime.TotalGameTime.TotalMilliseconds) / 100.0f
 
     let effect = content.Effect
 
     effect.CurrentTechnique <- effect.Techniques.["PosCol"]
     effect.Parameters.["xWorld"].SetValue(Matrix.Identity)
-    effect.Parameters.["xView"].SetValue(Matrix.CreateLookAt(Vector3(-5.0f, 2.0f, 5.0f), Vector3.Zero, Vector3.UnitY))
-    effect.Parameters.["xProjection"].SetValue(Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, device.Viewport.AspectRatio, 0.1f, 100.0f))
+    effect.Parameters.["xView"].SetValue(viewMatrix)
+    effect.Parameters.["xProjection"].SetValue(projectionMatrix)
     
     device.DepthStencilState <- DepthStencilState.Default
 
