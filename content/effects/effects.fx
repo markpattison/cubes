@@ -43,7 +43,7 @@ VertexToPixel CubeVS(VertexShaderInput input)
 	output.WorldPosition = mul(input.Position, xWorld).rgb;
 	output.Normal = normal;
 	output.Colour = input.Colour;
-	output.IsHighlighted = abs(xFaceTag - input.Tag) < 0.001 && abs(xCubeTag - xCubeIndex) < 0.001;
+	output.IsHighlighted = abs(xFaceTag - input.Tag) < 0.01 && abs(xCubeTag - xCubeIndex) < 0.01;
 
 	return output;
 }
