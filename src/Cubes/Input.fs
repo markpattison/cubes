@@ -29,8 +29,14 @@ let update input  =
         PreviousMouse = input.Mouse
     }
 
-let justPressed inputState key =
-    inputState.Keyboard.IsKeyDown(key) && inputState.Keyboard.IsKeyUp(key)
+let justPressed input key =
+    input.Keyboard.IsKeyDown(key) && input.Keyboard.IsKeyUp(key)
 
-let isPressed inputState key =
-    inputState.Keyboard.IsKeyDown(key)
+let isPressed input key =
+    input.Keyboard.IsKeyDown(key)
+
+let isRightDragging input =
+    input.Mouse.RightButton = ButtonState.Pressed && input.PreviousMouse.RightButton = ButtonState.Pressed
+
+let mouseMovement input =
+    (input.Mouse.X - input.PreviousMouse.X, input.Mouse.Y - input.PreviousMouse.Y)

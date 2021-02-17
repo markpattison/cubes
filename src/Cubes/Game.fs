@@ -63,6 +63,12 @@ type Game1() as _this =
 
         horizontalRotation <- horizontalRotation + (if Input.isPressed input Keys.Left then 0.02f else 0.0f) - (if Input.isPressed input Keys.Right then 0.02f else 0.0f)
         verticleRotation <- verticleRotation + (if Input.isPressed input Keys.Down then 0.02f else 0.0f) - (if Input.isPressed input Keys.Up then 0.02f else 0.0f)
+
+        if Input.isRightDragging input then
+            let dx, dy = Input.mouseMovement input
+            horizontalRotation <- horizontalRotation - 0.01f * float32 dx
+            verticleRotation <- verticleRotation - 0.01f * float32 dy
+        
         verticleRotation <- max -1.4f (min 1.4f verticleRotation)
 
         base.Update(gameTime)
