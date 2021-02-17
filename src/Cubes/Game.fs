@@ -35,7 +35,7 @@ type Game1() as _this =
     do _this.IsMouseVisible <- true
 
     let updateInputState() =
-        input <- Keyboard.GetState() |> Input.updated input
+        input <- Input.update input
 
     override _this.Initialize() =
         base.Initialize()
@@ -61,8 +61,8 @@ type Game1() as _this =
 
         if Input.justPressed input Keys.Escape then _this.Exit()
 
-        horizontalRotation <- horizontalRotation + (if Input.isPressed input Keys.Left then 0.01f else 0.0f) - (if Input.isPressed input Keys.Right then 0.01f else 0.0f)
-        verticleRotation <- verticleRotation + (if Input.isPressed input Keys.Down then 0.01f else 0.0f) - (if Input.isPressed input Keys.Up then 0.01f else 0.0f)
+        horizontalRotation <- horizontalRotation + (if Input.isPressed input Keys.Left then 0.02f else 0.0f) - (if Input.isPressed input Keys.Right then 0.02f else 0.0f)
+        verticleRotation <- verticleRotation + (if Input.isPressed input Keys.Down then 0.02f else 0.0f) - (if Input.isPressed input Keys.Up then 0.02f else 0.0f)
         verticleRotation <- max -1.4f (min 1.4f verticleRotation)
 
         base.Update(gameTime)

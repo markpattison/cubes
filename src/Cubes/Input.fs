@@ -1,29 +1,36 @@
 module Input
 
-open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Input
 
 type State = 
     {
-        KeyboardState: KeyboardState
-        PreviousKeyboardState: KeyboardState
+        Keyboard: KeyboardState
+        PreviousKeyboard: KeyboardState
+
+        Mouse: MouseState
+        PreviousMouse: MouseState
     }
 
 let initialState() =
-    let state = Microsoft.Xna.Framework.Input.Keyboard.GetState()
+    let keyboard = Keyboard.GetState()
+    let mouse = Mouse.GetState()
     {
-        KeyboardState = state
-        PreviousKeyboardState = state
+        Keyboard = keyboard
+        PreviousKeyboard = keyboard
+        Mouse = mouse
+        PreviousMouse = mouse
     }
 
-let updated inputState keyboardState =
+let update input  =
     {
-        KeyboardState = keyboardState
-        PreviousKeyboardState = inputState.KeyboardState
+        Keyboard = Keyboard.GetState()
+        PreviousKeyboard = input.Keyboard
+        Mouse = Mouse.GetState()
+        PreviousMouse = input.Mouse
     }
 
 let justPressed inputState key =
-    inputState.KeyboardState.IsKeyDown(key) && inputState.PreviousKeyboardState.IsKeyUp(key)
+    inputState.Keyboard.IsKeyDown(key) && inputState.Keyboard.IsKeyUp(key)
 
 let isPressed inputState key =
-    inputState.KeyboardState.IsKeyDown(key)
+    inputState.Keyboard.IsKeyDown(key)
