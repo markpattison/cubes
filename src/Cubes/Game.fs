@@ -96,7 +96,7 @@ type Game1() as _this =
             if x >= 0 && y >= 0 && x < pickerTarget.Width && y < pickerTarget.Height then
                 pickerTarget.GetData<PackedVector.HalfVector2>(0, Rectangle(x, y, 1, 1), pickerData, 0, 1)
                 let pickColour = pickerData.[0].ToVector2()
-                8.0f * pickColour.X, 6.0f * pickColour.Y
+                Cubes.colourToTags pickColour
             else
                 0.0f, 0.0f
 

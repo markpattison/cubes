@@ -5,6 +5,10 @@ open Microsoft.Xna.Framework.Graphics
 
 open VertexPositionNormalColourTag
 
+// low value e.g. 10.0f for easy debugging
+// 1000.0 is fine for lots of cubes
+let tagScale = 10.0f
+
 type Content =
     {
         Effect: Effect
@@ -168,6 +172,10 @@ let drawPicker (device: GraphicsDevice) (viewMatrix: Matrix) (projectionMatrix: 
                 pass.Apply()
 
                 effect.Parameters.["xWorld"].SetValue(Matrix.CreateScale(size * 0.5f) * Matrix.CreateTranslation(centre))
+                effect.Parameters.["xTagScale"].SetValue(tagScale)
                 effect.Parameters.["xCubeIndex"].SetValue(float32 (1 + cubeIndex))
                 device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, content.Vertices, 0, content.Vertices.Length, content.Indices, 0, content.Indices.Length / 3)
             ))
+
+let colourToTags (pickColour: Vector2) =
+    round (tagScale * pickColour.X), round (tagScale * pickColour.Y)

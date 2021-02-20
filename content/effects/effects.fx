@@ -7,6 +7,7 @@ float3 xLightPosition;
 float xCubeIndex;
 float xFaceTag;
 float xCubeTag;
+float xTagScale;
 
 struct VertexShaderInput
 {
@@ -93,8 +94,8 @@ PickerVertexToPixel PickerVS(VertexShaderInput input)
 
 	output.Position = mul(input.Position, preWorldViewProjection);
 
-	output.Colour.r = xCubeIndex / 8.0;
-	output.Colour.g = input.Tag / 6.0;
+	output.Colour.r = xCubeIndex / xTagScale;
+	output.Colour.g = input.Tag / xTagScale;
 
 	return output;
 }
