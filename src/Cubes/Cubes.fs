@@ -120,9 +120,9 @@ let loadContent (_this: Game) device =
 
         Indices = indices
         Cubes =
-            [ Vector3(0.0f, 0.0f, 0.0f), 1.0f
-              Vector3(-1.0f, 0.0f, 0.0f), 0.5f
-              Vector3(-2.0f, 0.0f, 0.0f), 0.25f ]
+            [ Vector3(0.0f, 0.0f, 0.0f), 1.0f ]
+            //   Vector3(-1.0f, 0.0f, 0.0f), 0.5f
+            //   Vector3(-2.0f, 0.0f, 0.0f), 0.25f ]
     }
 
 let draw (device: GraphicsDevice) (viewMatrix: Matrix) (projectionMatrix: Matrix) content (gameTime: GameTime) (cubeTag: float32) (faceTag: float32) =

@@ -21,6 +21,9 @@ type Game1() as _this =
     let mutable horizontalRotation = float32 (Math.PI * 7.0 / 4.0)
     let mutable verticleRotation = float32 (-Math.PI / 4.0)
 
+    let mutable cubeIndex = 0
+    let mutable faceIndex = 0
+
     let graphics = new GraphicsDeviceManager(_this)
 
     do graphics.GraphicsProfile <- GraphicsProfile.HiDef
@@ -69,6 +72,13 @@ type Game1() as _this =
             horizontalRotation <- horizontalRotation - 0.01f * float32 dx
             verticleRotation <- verticleRotation - 0.01f * float32 dy
         
+        if Input.justLeftClicked input && cubeIndex > 0 && faceIndex > 0 then
+            let oldCubeLocation, size = gameContent.Cubes.[cubeIndex - 1]
+            let faceNormal = gameContent.Vertices.[4 * (faceIndex - 1)].Normal
+            let newCubeLocation = oldCubeLocation + size * faceNormal
+            let cubes = (newCubeLocation, size) :: gameContent.Cubes
+            gameContent <- { gameContent with Cubes = cubes }
+
         verticleRotation <- max -1.4f (min 1.4f verticleRotation)
 
         base.Update(gameTime)
@@ -92,7 +102,7 @@ type Game1() as _this =
 
         let x, y = mouse.X, mouse.Y;
 
-        let cubeIndex, faceIndex =
+        let cubeTag, faceTag =
             if x >= 0 && y >= 0 && x < pickerTarget.Width && y < pickerTarget.Height then
                 pickerTarget.GetData<PackedVector.HalfVector2>(0, Rectangle(x, y, 1, 1), pickerData, 0, 1)
                 let pickColour = pickerData.[0].ToVector2()
@@ -100,10 +110,13 @@ type Game1() as _this =
             else
                 0.0f, 0.0f
 
+        cubeIndex <- int (round cubeTag)
+        faceIndex <- int (round faceTag)
+
         device.SetRenderTarget(null)
         device.Clear(Color.DarkGray)
 
-        Cubes.draw device viewMatrix projectionMatrix gameContent gameTime cubeIndex faceIndex
+        Cubes.draw device viewMatrix projectionMatrix gameContent gameTime cubeTag faceTag
         Axes.draw device viewMatrix projectionMatrix axesContent gameTime
         Text.draw device textContent fps.Fps
         Debug.draw device debugContent pickerTarget

@@ -40,3 +40,6 @@ let isRightDragging input =
 
 let mouseMovement input =
     (input.Mouse.X - input.PreviousMouse.X, input.Mouse.Y - input.PreviousMouse.Y)
+
+let justLeftClicked input =
+    input.Mouse.LeftButton = ButtonState.Pressed && input.PreviousMouse.LeftButton = ButtonState.Released
