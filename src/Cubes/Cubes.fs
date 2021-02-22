@@ -125,6 +125,13 @@ let loadContent (_this: Game) device =
             //   Vector3(-2.0f, 0.0f, 0.0f), 0.25f ]
     }
 
+let addCube content cubeIndex faceIndex =
+    let oldCubeLocation, size = content.Cubes.[cubeIndex - 1]
+    let faceNormal = content.Vertices.[4 * (faceIndex - 1)].Normal
+    let newCubeLocation = oldCubeLocation + size * faceNormal
+    let cubes = (newCubeLocation, size) :: content.Cubes
+    { content with Cubes = cubes }
+
 let draw (device: GraphicsDevice) (viewMatrix: Matrix) (projectionMatrix: Matrix) content (gameTime: GameTime) (cubeTag: float32) (faceTag: float32) =
     let time = (single gameTime.TotalGameTime.TotalMilliseconds) / 100.0f
 
