@@ -133,14 +133,37 @@ let addCube content cubeIndex faceIndex =
     { content with Cubes = cubes }
 
 let removeCube content cubeIndex =
-    let cubes =
-        content.Cubes
-        |> List.mapi (fun i c -> i <> cubeIndex - 1, c)
-        |> List.filter fst
-        |> List.map snd
-    
-    { content with Cubes = cubes }
 
+    if content.Cubes.Length = 1 then
+        content
+    else
+        let cubes =
+            content.Cubes
+            |> List.mapi (fun i c -> i <> cubeIndex - 1, c)
+            |> List.filter fst
+            |> List.map snd
+        
+        { content with Cubes = cubes }
+
+let minMaxPositions content =
+    let mutable minX = System.Single.MaxValue
+    let mutable minY = System.Single.MaxValue
+    let mutable minZ = System.Single.MaxValue
+    let mutable maxX = System.Single.MinValue
+    let mutable maxY = System.Single.MinValue
+    let mutable maxZ = System.Single.MinValue
+
+    content.Cubes
+    |> List.iter (fun (pos, _) ->
+        if pos.X < minX then minX <- pos.X
+        if pos.Y < minY then minY <- pos.Y
+        if pos.Z < minZ then minZ <- pos.Z
+        if pos.X > maxX then maxX <- pos.X
+        if pos.Y > maxY then maxY <- pos.Y
+        if pos.Z > maxZ then maxZ <- pos.Z)
+    
+    Vector3(minX, minY, minZ), Vector3(maxX, maxY, maxZ)
+    
 let draw (device: GraphicsDevice) (viewMatrix: Matrix) (projectionMatrix: Matrix) content (gameTime: GameTime) (cubeTag: float32) (faceTag: float32) =
     let time = (single gameTime.TotalGameTime.TotalMilliseconds) / 100.0f
 

@@ -18,6 +18,9 @@ type Game1() as _this =
     let mutable debugContent = Unchecked.defaultof<Debug.Content>
     let mutable fps = Unchecked.defaultof<Diagnostics.Fps>
 
+    let mutable lookAt = Vector3.Zero
+    let minLookDistance = 7.0f
+    let mutable lookDistance = minLookDistance
     let mutable horizontalRotation = float32 (Math.PI * 7.0 / 4.0)
     let mutable verticalRotation = float32 (-Math.PI / 4.0)
 
@@ -77,6 +80,11 @@ type Game1() as _this =
                 gameContent <- Cubes.removeCube gameContent cubeIndex
             else
                 gameContent <- Cubes.addCube gameContent cubeIndex faceIndex
+            
+            let minPos, maxPos = Cubes.minMaxPositions gameContent
+
+            lookAt <- 0.5f * (minPos + maxPos)
+            lookDistance <- max minLookDistance (4.0f + max (max (maxPos.X - minPos.X) (maxPos.Y - minPos.Y)) (maxPos.Z - minPos.Z))
 
         verticalRotation <- max -1.4f (min 1.4f verticalRotation)
 
@@ -88,8 +96,8 @@ type Game1() as _this =
 
         let device = _this.GraphicsDevice
 
-        let cameraLocation = Vector3.Transform(Vector3(0.0f, 0.0f, 7.0f), Matrix.CreateRotationX(verticalRotation) * Matrix.CreateRotationY(horizontalRotation))
-        let viewMatrix = Matrix.CreateLookAt(cameraLocation, Vector3.Zero, Vector3.UnitY)
+        let cameraLocation = Vector3.Transform(Vector3(0.0f, 0.0f, lookDistance), Matrix.CreateRotationX(verticalRotation) * Matrix.CreateRotationY(horizontalRotation))
+        let viewMatrix = Matrix.CreateLookAt(cameraLocation, lookAt, Vector3.UnitY)
         let projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, device.Viewport.AspectRatio, 0.1f, 100.0f)
 
         device.SetRenderTarget(pickerTarget)
