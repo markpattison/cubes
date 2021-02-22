@@ -132,6 +132,15 @@ let addCube content cubeIndex faceIndex =
     let cubes = (newCubeLocation, size) :: content.Cubes
     { content with Cubes = cubes }
 
+let removeCube content cubeIndex =
+    let cubes =
+        content.Cubes
+        |> List.mapi (fun i c -> i <> cubeIndex - 1, c)
+        |> List.filter fst
+        |> List.map snd
+    
+    { content with Cubes = cubes }
+
 let draw (device: GraphicsDevice) (viewMatrix: Matrix) (projectionMatrix: Matrix) content (gameTime: GameTime) (cubeTag: float32) (faceTag: float32) =
     let time = (single gameTime.TotalGameTime.TotalMilliseconds) / 100.0f
 

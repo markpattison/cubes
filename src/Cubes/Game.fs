@@ -73,7 +73,10 @@ type Game1() as _this =
             verticalRotation <- verticalRotation - 0.01f * float32 dy
         
         if Input.justLeftClicked input && cubeIndex > 0 && faceIndex > 0 then
-            gameContent <- Cubes.addCube gameContent cubeIndex faceIndex
+            if Input.isPressed input Keys.LeftControl then
+                gameContent <- Cubes.removeCube gameContent cubeIndex
+            else
+                gameContent <- Cubes.addCube gameContent cubeIndex faceIndex
 
         verticalRotation <- max -1.4f (min 1.4f verticalRotation)
 
