@@ -19,7 +19,7 @@ type Game1() as _this =
     let mutable fps = Unchecked.defaultof<Diagnostics.Fps>
 
     let mutable horizontalRotation = float32 (Math.PI * 7.0 / 4.0)
-    let mutable verticleRotation = float32 (-Math.PI / 4.0)
+    let mutable verticalRotation = float32 (-Math.PI / 4.0)
 
     let mutable cubeIndex = 0
     let mutable faceIndex = 0
@@ -65,21 +65,17 @@ type Game1() as _this =
         if Input.justPressed input Keys.Escape then _this.Exit()
 
         horizontalRotation <- horizontalRotation + (if Input.isPressed input Keys.Left then 0.02f else 0.0f) - (if Input.isPressed input Keys.Right then 0.02f else 0.0f)
-        verticleRotation <- verticleRotation + (if Input.isPressed input Keys.Down then 0.02f else 0.0f) - (if Input.isPressed input Keys.Up then 0.02f else 0.0f)
+        verticalRotation <- verticalRotation + (if Input.isPressed input Keys.Down then 0.02f else 0.0f) - (if Input.isPressed input Keys.Up then 0.02f else 0.0f)
 
         if Input.isRightDragging input then
             let dx, dy = Input.mouseMovement input
             horizontalRotation <- horizontalRotation - 0.01f * float32 dx
-            verticleRotation <- verticleRotation - 0.01f * float32 dy
+            verticalRotation <- verticalRotation - 0.01f * float32 dy
         
         if Input.justLeftClicked input && cubeIndex > 0 && faceIndex > 0 then
-            let oldCubeLocation, size = gameContent.Cubes.[cubeIndex - 1]
-            let faceNormal = gameContent.Vertices.[4 * (faceIndex - 1)].Normal
-            let newCubeLocation = oldCubeLocation + size * faceNormal
-            let cubes = (newCubeLocation, size) :: gameContent.Cubes
-            gameContent <- { gameContent with Cubes = cubes }
+            gameContent <- Cubes.addCube gameContent cubeIndex faceIndex
 
-        verticleRotation <- max -1.4f (min 1.4f verticleRotation)
+        verticalRotation <- max -1.4f (min 1.4f verticalRotation)
 
         base.Update(gameTime)
 
@@ -89,7 +85,7 @@ type Game1() as _this =
 
         let device = _this.GraphicsDevice
 
-        let cameraLocation = Vector3.Transform(Vector3(0.0f, 0.0f, 7.0f), Matrix.CreateRotationX(verticleRotation) * Matrix.CreateRotationY(horizontalRotation))
+        let cameraLocation = Vector3.Transform(Vector3(0.0f, 0.0f, 7.0f), Matrix.CreateRotationX(verticalRotation) * Matrix.CreateRotationY(horizontalRotation))
         let viewMatrix = Matrix.CreateLookAt(cameraLocation, Vector3.Zero, Vector3.UnitY)
         let projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, device.Viewport.AspectRatio, 0.1f, 100.0f)
 
