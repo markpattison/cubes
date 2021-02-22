@@ -8,6 +8,7 @@ float xCubeIndex;
 float xFaceTag;
 float xCubeTag;
 float xTagScale;
+float xHighlightIntensity;
 
 struct VertexShaderInput
 {
@@ -58,7 +59,9 @@ PixelToFrame CubePS(VertexToPixel input)
 	float lightingFactor = saturate(dot(normal, -lightDirection)) * 1.0 + xAmbient;
 	float4 colour = float4(input.Colour.rgb * lightingFactor, input.Colour.a);
 
-	output.Colour = input.IsHighlighted ? float4(1.0, 1.0, 1.0, 1.0) : colour;
+	float highlightIntensity = input.IsHighlighted ? xHighlightIntensity : 0.0;
+
+	output.Colour = lerp(colour, float4(1.0, 1.0, 1.0, 1.0), highlightIntensity);
 
 	return output;
 }

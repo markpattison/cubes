@@ -154,6 +154,8 @@ let draw (device: GraphicsDevice) (viewMatrix: Matrix) (projectionMatrix: Matrix
 
     effect.Parameters.["xCubeTag"].SetValue(cubeTag)
     effect.Parameters.["xFaceTag"].SetValue(faceTag)
+
+    effect.Parameters.["xHighlightIntensity"].SetValue(0.4f + 0.1f * sin time)
     
     device.DepthStencilState <- DepthStencilState.Default
 
