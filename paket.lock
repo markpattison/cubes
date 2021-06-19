@@ -2,8 +2,8 @@ STORAGE: NONE
 RESTRICTION: == netcoreapp3.1
 NUGET
   remote: https://api.nuget.org/v3/index.json
-    FSharp.Core (5.0)
-    Microsoft.NETCore.Platforms (5.0)
+    FSharp.Core (5.0.1)
+    Microsoft.NETCore.Platforms (5.0.2)
     MonoGame.Framework.WindowsDX (3.8.0.1641)
       SharpDX (>= 4.0.1)
       SharpDX.Direct2D1 (>= 4.0.1)
